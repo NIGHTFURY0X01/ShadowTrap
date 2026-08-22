@@ -1,0 +1,53 @@
+services:
+  api:
+    build: .
+    command: ["api", "--host", "0.0.0.0"]
+    environment:
+      SHADOWTRAP_DATABASE_PATH: /app/data/shadowtrap.db
+      SHADOWTRAP_API_HOST: 0.0.0.0
+    ports:
+      - "8000:8000"
+    volumes:
+      - shadowtrap-data:/app/data
+    restart: unless-stopped
+
+  http-honeypot:
+    build: .
+    command: ["http", "--host", "0.0.0.0"]
+    environment:
+      SHADOWTRAP_DATABASE_PATH: /app/data/shadowtrap.db
+      SHADOWTRAP_HTTP_HOST: 0.0.0.0
+    ports:
+      - "8080:8080"
+    volumes:
+      - shadowtrap-data:/app/data
+    restart: unless-stopped
+
+  ssh-honeypot:
+    build: .
+    command: ["ssh", "--host", "0.0.0.0"]
+    environment:
+      SHADOWTRAP_DATABASE_PATH: /app/data/shadowtrap.db
+      SHADOWTRAP_SSH_HOST: 0.0.0.0
+    ports:
+      - "2222:2222"
+    volumes:
+      - shadowtrap-data:/app/data
+    restart: unless-stopped
+
+  # Activate with `docker compose --profile postgres up` and set the same
+  # SHADOWTRAP_DATABASE_URL for api, http-honeypot, and ssh-honeypot.
+  postgres:
+    image: postgres:16-alpine
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_DB: shadowtrap
+      POSTGRES_USER: shadowtrap
+      POSTGRES_PASSWORD: change-me-before-deployment
+    volumes:
+      - shadowtrap-postgres:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  shadowtrap-data:
+  shadowtrap-postgres:

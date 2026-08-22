@@ -1,0 +1,35 @@
+# Local-development defaults. Environment variables prefixed with SHADOWTRAP_
+# override every setting; copy .env.example for deployment guidance.
+database:
+  path: data/shadowtrap.db
+  # url: postgresql://shadowtrap:change-me@postgres:5432/shadowtrap
+  retention_days: 90
+
+honeypots:
+  http_host: 127.0.0.1
+  http_port: 8080
+  ssh_host: 127.0.0.1
+  ssh_port: 2222
+
+api:
+  host: 127.0.0.1
+  port: 8000
+  cors_origins:
+    - http://127.0.0.1:8000
+    - http://localhost:8000
+
+risk:
+  high_threshold: 70
+  critical_threshold: 85
+
+security:
+  # Set only through SHADOWTRAP_API_KEY or a non-committed deployment config.
+  api_key: null
+
+alerting:
+  enabled: false
+  webhook_url: null
+  dedupe_seconds: 300
+
+logging:
+  level: INFO

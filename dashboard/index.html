@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ShadowTrap honeypot attack intelligence dashboard">
+  <title>ShadowTrap · Attack Intelligence</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+
+    <div>
+        <h1>ShadowTrap</h1>
+        <p>Honeypot Attack Intelligence</p>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◈</span><div><h1>ShadowTrap</h1><p>Honeypot attack intelligence</p></div></div>
+    <div class="topbar-actions">
+      <span class="connection" id="api-status"><i></i><span>Checking API</span></span>
+      <label class="toggle"><input id="auto-refresh" type="checkbox" checked><span>Live refresh</span></label>
+      <button class="button secondary" id="refresh-button" type="button">Refresh</button>
+    </div>
+  </header>
+
+    <div class="status">
+        <span class="status-dot"></span>
+        API ONLINE
+    </div>
+
+</header>
+
+
+<main>
+
+    <!-- =========================
+         GLOBAL STATISTICS
+    ========================== -->
+
+    <section class="stats">
+
+        <div class="card">
+            <span>Total Attacks</span>
+            <strong id="total-attacks">-</strong>
+        </div>
+
+        <div class="card">
+            <span>Unique IPs</span>
+            <strong id="unique-ips">-</strong>
+        </div>
+
+        <div class="card">
+            <span>SSH Attacks</span>
+            <strong id="ssh-attacks">-</strong>
+        </div>
+
+        <div class="card">
+            <span>HTTP Attacks</span>
+            <strong id="http-attacks">-</strong>
+        </div>
+
+  <main>
+    <section class="page-heading">
+      <div><p class="eyebrow">Security operations overview</p><h2>Threat activity at a glance</h2></div>
+      <details class="api-key-panel"><summary>API access</summary><label for="api-key">API key <input id="api-key" type="password" autocomplete="off" placeholder="Optional X-API-Key"></label><button id="save-api-key" class="button small" type="button">Apply</button><p>Stored only for this browser session.</p></details>
+    </section>
+
+    <section class="stat-grid" aria-label="Attack statistics">
+      <article class="stat-card"><span>Total events</span><strong id="total-attacks">—</strong><small>All honeypot activity</small></article>
+      <article class="stat-card"><span>Unique IPs</span><strong id="unique-ips">—</strong><small>Observed attackers</small></article>
+      <article class="stat-card"><span>HTTP events</span><strong id="http-attacks">—</strong><small>Web reconnaissance &amp; login</small></article>
+      <article class="stat-card"><span>SSH events</span><strong id="ssh-attacks">—</strong><small>Remote access activity</small></article>
+      <article class="stat-card accent"><span>Auth attempts</span><strong id="authentication-attempts">—</strong><small>Captured login submissions</small></article>
+      <article class="stat-card warning"><span>Suspicious requests</span><strong id="suspicious-requests">—</strong><small>Known high-interest paths</small></article>
+    </section>
+
+    <section class="panel activity-panel">
+      <div class="panel-heading"><div><p class="eyebrow">Service distribution</p><h2>Collection coverage</h2></div><span id="last-updated" class="muted">Not updated yet</span></div>
+      <div class="service-bars" id="service-bars"><p class="empty-state">No events collected yet.</p></div>
+    </section>
+
+    <section class="investigate-section" aria-labelledby="investigate-title">
+      <div class="section-heading"><div><p class="eyebrow">Investigation workspace</p><h2 id="investigate-title">Investigate an attacker</h2><p>Combine HTTP, SSH, credentials, campaign signals, and a chronological event timeline.</p></div></div>
+      <form id="investigation-form" class="investigation-form">
+        <label class="sr-only" for="ip-input">IP address</label><input id="ip-input" name="ip" inputmode="decimal" autocomplete="off" placeholder="IPv4 or IPv6 address, e.g. 198.51.100.23" required>
+        <button class="button" type="submit">Investigate IP</button>
+      </form>
+      <p id="investigation-message" class="form-message" role="status"></p>
+      <div id="investigation-result" class="investigation-result" hidden>
+        <div class="risk-overview"><div><span class="eyebrow">Risk score</span><strong id="investigation-risk">—</strong><span class="out-of">/ 100</span></div><div><span class="eyebrow">Severity</span><strong id="investigation-severity" class="severity">—</strong></div><div><span class="eyebrow">Classification</span><strong id="investigation-classification" class="classification">—</strong></div></div>
+        <div class="intel-grid">
+          <article><h3>Evidence</h3><ul id="evidence-list" class="evidence-list"></ul></article>
+          <article><h3>HTTP intelligence</h3><dl id="http-intelligence" class="key-values"></dl></article>
+          <article><h3>Campaign &amp; credentials</h3><dl id="campaign-intelligence" class="key-values"></dl></article>
+        </div>
+        <article class="timeline-card"><div class="panel-heading"><h3>Attack timeline</h3><span id="timeline-count" class="muted"></span></div><ol id="timeline" class="timeline"></ol></article>
+      </div>
+    </section>
+
+    <!-- =========================
+         HTTP INTELLIGENCE
+    ========================== -->
+
+    <section class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <h2>HTTP Attack Intelligence</h2>
+                <p class="panel-subtitle">
+                    Investigate HTTP activity by source IP
+                </p>
+            </div>
+
+            <div class="ip-search">
+
+                <input
+                        id="ip-input"
+                        type="text"
+                        placeholder="127.0.0.1"
+                        value="127.0.0.1"
+                >
+
+                <button onclick="loadHTTPAnalysis()">
+                    Investigate
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div id="http-analysis">
+
+            <div class="empty-state">
+                Enter an IP address to investigate.
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         RECENT ATTACKS
+    ========================== -->
+
+    <section class="panel">
+
+        <div class="panel-header">
+
+            <div>
+                <h2>Recent Attacks</h2>
+                <p class="panel-subtitle">
+                    Latest honeypot activity
+                </p>
+            </div>
+
+            <button onclick="loadAttacks()">
+                Refresh
+            </button>
+
+        </div>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                <tr>
+                    <th>Time</th>
+                    <th>IP</th>
+                    <th>Service</th>
+                    <th>Event</th>
+                    <th>Username</th>
+                </tr>
+
+                </thead>
+
+
+                <tbody id="attacks-table">
+
+                <tr>
+                    <td colspan="5">
+                        Loading...
+                    </td>
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+      <div class="panel-heading"><div><p class="eyebrow">Latest collection</p><h2>Recent attacks</h2></div><span id="attack-count" class="muted"></span></div>
+      <div class="table-wrap"><table><thead><tr><th>Time</th><th>Source IP</th><th>Service</th><th>Event</th><th>Path / user</th><th></th></tr></thead><tbody id="attacks-table"><tr><td colspan="6" class="empty-state">Loading events…</td></tr></tbody></table></div>
+    </section>
+  </main>
+  <template id="empty-template"><p class="empty-state">No data is available yet.</p></template>
+  <script src="app.js" defer></script>
+</body>
+</html>
